@@ -1,1 +1,29 @@
+name: Genesis Tick Runner
 
+on:
+  schedule:
+    # Toutes les 5 minutes
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+    # Permet de déclencher manuellement depuis GitHub
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run tick
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node backend/tick_runner.js
